@@ -45,23 +45,14 @@
       text (JTextField.)
       pad (let [comp (proxy [JComponent] []
                        (paintComponent [g]
-                         ;; TODO
-                         ;; the @image object is unused througout
-                         ;; change it to something more intelligent
-                         (if (nil? @image)
+                         (if (nil? @g2d)
                            (dosync
-                            (ref-set image (.createImage this
-                                                         (.width (.getSize this))
-                                                         (.height (.getSize this))
-                                                         ))
                             ;; getGraphics is old
                             ;; (ref-set g2d (cast Graphics2D (.getGraphics @image)))
                             ;; createGraphics returns Graphics2D
                             (ref-set g2d (.createGraphics ibuff))
-                            
                             )
                            )
-                         ;; (.drawImage g @image 0 0 nil)
                          (.drawImage g ibuff 0 0 nil)
                          )
 
