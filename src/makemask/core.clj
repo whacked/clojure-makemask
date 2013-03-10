@@ -47,7 +47,7 @@
 
       pad (let [comp (proxy [JComponent] []
                        (paintComponent [g]
-                         (if (nil? @g2d)
+                         (when-not @g2d
                            (dosync
                             ;; getGraphics is old
                             ;; (ref-set g2d (cast Graphics2D (.getGraphics @image)))
@@ -80,7 +80,7 @@
                                    ))
               (.addMouseMotionListener (proxy [MouseMotionAdapter] []
                                          (mouseDragged [event]
-                                           (when-not (nil? @g2d)
+                                           (when @g2d
                                             (let [curX (.getX event)
                                                   curY (.getY event)]
                                               (.lineTo gpath (float curX) (float curY))
@@ -93,7 +93,7 @@
             )
 
       resetPad (fn []
-                 (when-not (nil? @g2d)
+                 (when @g2d
                    (.reset gpath)
                    (doto @g2d
                      (.setPaint Color/WHITE);
@@ -147,7 +147,7 @@
                                                                  (.setPreferredSize (Dimension. 16 16))
                                                                  (.addActionListener (reify ActionListener
                                                                                        (actionPerformed [this e]
-                                                                                         (when-not (nil? @g2d)
+                                                                                         (when @g2d
                                                                                            (.setPaint @g2d %)
                                                                                            (.repaint pad)
                                                                                            ))))
