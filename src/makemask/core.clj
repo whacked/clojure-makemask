@@ -8,7 +8,7 @@
             javax.swing JPanel JComponent JFrame JButton JOptionPane
                         JLabel ImageIcon JTextField
             )
-           (java.awt Color Dimension Graphics2D BorderLayout)
+           (java.awt Color Dimension Graphics2D BorderLayout GridBagLayout GridBagConstraints)
            (java.awt.image BufferedImage)
            (java.awt.geom GeneralPath)
            (java.awt.event ActionListener MouseAdapter MouseMotionAdapter)
@@ -133,39 +133,70 @@
                         ))))
       paintwindow (let [
                         paintwindow (JFrame.)
-                        panel (let [pn (JPanel.)
-                                    makeColorButton #(let [tempButton (JButton.)
-                                                           ]
-                                                       (doto tempButton
-                                                         (.setBackground %)
-                                                         (.setPreferredSize (Dimension. 16 16))
-                                                         (.addActionListener (reify ActionListener
-                                                                               (actionPerformed [this e]
-                                                                                 (when-not (nil? @g2d)
-                                                                                     (.setPaint @g2d %)
-                                                                                     (.repaint pad)
-                                                                                   ))))
-                                                         )
-                                                       (.add pn tempButton)
-                                                       )
-                                    ]
-                                (makeColorButton Color/BLUE)
-                                (makeColorButton Color/MAGENTA)
-                                (makeColorButton Color/RED)
-                                (makeColorButton Color/GREEN)
-                                (makeColorButton Color/BLACK)
-                                (doto pn
-                                  (.setPreferredSize (Dimension. 80 68))
-                                  (.add clearButton)
-                                  (.add saveButton)
-                                  ))
+                        panel-control (let [pn (JPanel.)
+                                            makeColorButton #(let [tempButton (JButton.)
+                                                                   ]
+                                                               (doto tempButton
+                                                                 (.setBackground %)
+                                                                 (.setPreferredSize (Dimension. 16 16))
+                                                                 (.addActionListener (reify ActionListener
+                                                                                       (actionPerformed [this e]
+                                                                                         (when-not (nil? @g2d)
+                                                                                           (.setPaint @g2d %)
+                                                                                           (.repaint pad)
+                                                                                           ))))
+                                                                 )
+                                                               (.add pn tempButton)
+                                                               )
+                                            ]
+                                        (makeColorButton Color/BLUE)
+                                        (makeColorButton Color/MAGENTA)
+                                        (makeColorButton Color/RED)
+                                        (makeColorButton Color/GREEN)
+                                        (makeColorButton Color/BLACK)
+                                        (doto pn
+                                          (.setPreferredSize (Dimension. 80 68))
+                                          (.add clearButton)
+                                          (.add saveButton)
+                                          ))
+
+                        panel-image (let [p (JPanel.)
+                                          c (GridBagConstraints.)]
+                                      (.setLayout p (GridBagLayout.))
+                                      (set! (.fill c) GridBagConstraints/HORIZONTAL)
+                                      
+                                      (set! (.weightx c) 0.0)
+                                      (set! (.gridx c) 0)
+                                      (set! (.gridy c) 0)
+                                      (.add p (JLabel. "input") c)
+
+                                      (set! (.weightx c) 1.0)
+                                      (set! (.gridx c) 1)
+                                      (.add p text-input c)
+
+                                      (set! (.weightx c) 0.0)
+                                      (set! (.gridx c) 0)
+                                      (set! (.gridy c) 1)
+                                      (.add p (JLabel. "output") c)
+
+                                      (set! (.weightx c) 1.0)
+                                      (set! (.gridx c) 1)
+                                      (.add p text-output c)
+
+                                      (set! (.fill c) GridBagConstraints/BOTH)
+                                      (set! (.weighty c) 1.0)
+                                      (set! (.gridy c) 2)
+
+                                      (.add p pad c)
+                                      
+                                      p
+                                      )
                         
                         ]
                     (doto (.getContentPane paintwindow)
                       (.setLayout (BorderLayout.))
-                      (.add text BorderLayout/NORTH)
-                      (.add panel BorderLayout/WEST)
-                      (.add pad BorderLayout/CENTER)
+                      (.add panel-control BorderLayout/WEST)
+                      (.add panel-image BorderLayout/CENTER)
                       )
                     paintwindow
                     )
