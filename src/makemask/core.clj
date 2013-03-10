@@ -33,7 +33,7 @@
       opath "/tmp/test.png"
       
       ifile (File. ipath)
-      ibuff (ImageIO/read ifile)
+      ibuff (ref (ImageIO/read ifile))
 
       mcoord (ref {:x0 nil :y0 nil})
 
@@ -52,10 +52,10 @@
                             ;; getGraphics is old
                             ;; (ref-set g2d (cast Graphics2D (.getGraphics @image)))
                             ;; createGraphics returns Graphics2D
-                            (ref-set g2d (.createGraphics ibuff))
+                            (ref-set g2d (.createGraphics @ibuff))
                             )
                            )
-                         (.drawImage g ibuff 0 0 nil)
+                         (.drawImage g @ibuff 0 0 nil)
                          )
 
                        )]
@@ -92,7 +92,7 @@
                                          )))
             )
 
-      clearPad (fn []
+      resetPad (fn []
                  (when-not (nil? @g2d)
                    (.reset gpath)
                    (doto @g2d
@@ -100,15 +100,19 @@
                      (.fillRect 0 0 (.width (.getSize pad)) (.height (.getSize pad)))
                      (.setPaint Color/BLACK);
                      )
+                   (dosync
+                    (ref-set g2d nil))
                    (.repaint pad)
                    )
+                 (dosync
+                  (ref-set ibuff (ImageIO/read (File. (.getText text-input)))))
                  )
       
-      clearButton (doto (JButton. "Clear")
+      resetButton (doto (JButton. "Reset")
                     (.addActionListener
                      (reify ActionListener
                        (actionPerformed [this e]
-                         (clearPad)
+                         (resetPad)
                          ))))
       
       saveButton (doto (JButton. "Save")
@@ -117,8 +121,8 @@
                       (actionPerformed [this e]
 
                         (let [
-                              ioW (.getWidth ibuff)
-                              ioH (.getHeight ibuff)
+                              ioW (.getWidth @ibuff)
+                              ioH (.getHeight @ibuff)
                               iout (BufferedImage. ioW ioH BufferedImage/TYPE_INT_RGB)
                               ]
                           (doto (.createGraphics iout)
@@ -158,7 +162,7 @@
                                         (makeColorButton Color/BLACK)
                                         (doto pn
                                           (.setPreferredSize (Dimension. 80 68))
-                                          (.add clearButton)
+                                          (.add resetButton)
                                           (.add saveButton)
                                           ))
 
