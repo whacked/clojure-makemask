@@ -6,7 +6,7 @@
 (ns makemask.core
   (:import (
             javax.swing JPanel JComponent JFrame JButton JOptionPane
-                        JLabel ImageIcon
+                        JLabel ImageIcon JTextField
             )
            (java.awt Color Dimension Graphics2D BorderLayout)
            (java.awt.image BufferedImage)
@@ -42,6 +42,7 @@
 
       gpath (GeneralPath.)
       
+      text (JTextField.)
       pad (let [comp (proxy [JComponent] []
                        (paintComponent [g]
                          ;; TODO
@@ -173,6 +174,7 @@
                         ]
                     (doto (.getContentPane paintwindow)
                       (.setLayout (BorderLayout.))
+                      (.add text BorderLayout/NORTH)
                       (.add panel BorderLayout/WEST)
                       (.add pad BorderLayout/CENTER)
                       )
