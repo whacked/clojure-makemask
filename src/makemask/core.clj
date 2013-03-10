@@ -118,10 +118,8 @@
                               ioW (.getWidth ibuff)
                               ioH (.getHeight ibuff)
                               iout (BufferedImage. ioW ioH BufferedImage/TYPE_INT_RGB)
-
-                              g (.createGraphics iout)
                               ]
-                          (doto g
+                          (doto (.createGraphics iout)
                             (.setColor Color/BLACK)
                             (.fillRect 0 0 ioW ioH)
                             (.setColor Color/WHITE)
