@@ -41,8 +41,10 @@
       g2d (ref nil)
 
       gpath (GeneralPath.)
-      
-      text (JTextField.)
+
+      text-input (JTextField. ipath)
+      text-output (JTextField. opath)
+
       pad (let [comp (proxy [JComponent] []
                        (paintComponent [g]
                          (if (nil? @g2d)
@@ -127,7 +129,7 @@
                             )
                           (ImageIO/write
                            iout
-                           "PNG" (File. opath))
+                           "PNG" (File. (.getText text-output)))
                           )
 
                         ))))
